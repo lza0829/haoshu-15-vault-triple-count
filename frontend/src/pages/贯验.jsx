@@ -4,11 +4,14 @@ import {递,取} from "../api.js";
 export default function 贯验(){
   const [末,设末]=useState(null);
   const [史,设史]=useState([]);
+  const [批列,设批列]=useState([]);
   const [忙,设忙]=useState(false);
 
   const 刷=async()=>{
     const 列=await 取("/贯验");
     设史(列);
+    const 勾=await 取("/批勾稽");
+    设批列(勾);
     return 列;
   };
   useEffect(()=>{
@@ -35,7 +38,7 @@ export default function 贯验(){
 
   return (<div>
     <h1 className="题">贯验</h1>
-    <p className="述">沿枢纽 → 链接 → 卫星贯穿互证：两端可解、卫星有父、同父无双当前。</p>
+    <p className="述">沿枢纽 → 链接 → 卫星贯穿互证：两端可解、卫星有父、同父无双当前；并按批号重数三方勾稽，禁止全库总数冒充本批。</p>
     <div className="行">
       <button onClick={跑} disabled={忙}>{忙?"贯验中…":"跑贯验"}</button>
       <button className="次" onClick={刷}>刷新履历</button>
@@ -71,6 +74,33 @@ export default function 贯验(){
         </div>
       )}
     </>}
+
+    <div className="段">
+      <div className="段题">批次勾稽贯验（按批可追溯 · 口径乙：三计数相等且批内勾稽可解释）</div>
+      {!批列.length ? <div className="空态">暂无批次勾稽记录。</div> : (
+        <table>
+          <thead>
+            <tr>
+              <th>批号</th><th>valid</th>
+              <th>回执枢/链/星</th><th>库增枢/链/星</th>
+              <th>不可解释父子</th><th>说明</th>
+            </tr>
+          </thead>
+          <tbody>
+            {批列.map(g=>(
+              <tr key={g.批号}>
+                <td>{g.批号}</td>
+                <td><span className={`徽章 ${g.valid?"通":"败"}`}>{g.valid?"valid":"失败"}</span></td>
+                <td>{g.回执枢纽}/{g.回执链接}/{g.回执卫星}</td>
+                <td>{g.库增枢纽}/{g.库增链接}/{g.库增卫星}</td>
+                <td>{g.不可解释父子?.length ? g.不可解释父子.join("；") : "—"}</td>
+                <td>{g.说明}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
 
     <div className="段">
       <div className="段题">贯验履历</div>

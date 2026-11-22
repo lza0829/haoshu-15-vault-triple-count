@@ -3,7 +3,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from app.db import 夹具目录, 连接
-from app.services import 装载, 贯验, 目录
+from app.services import 装载, 贯验, 目录, 批次勾稽
 
 路由 = APIRouter(prefix="/api")
 
@@ -121,6 +121,29 @@ def 列贯验():
     conn = 连接()
     try:
         return [dict(r) for r in conn.execute("SELECT * FROM 金库贯验 ORDER BY 编号 DESC LIMIT 20")]
+    finally:
+        conn.close()
+
+
+@路由.get("/批勾稽")
+def 列批勾稽():
+    """批次勾稽贯验只读接口：批号、三计数、不可解释父子、valid。"""
+    conn = 连接()
+    try:
+        return 批次勾稽.列批(conn)
+    finally:
+        conn.close()
+
+
+@路由.get("/批勾稽/{pi}")
+def 取批勾稽(pi: str):
+    # 路径参数名用 ASCII：starlette 路由转换器不识别非 ASCII 参数名（既有中文参数名路由的通病）
+    conn = 连接()
+    try:
+        果 = 批次勾稽.取批(conn, pi)
+        if not 果:
+            raise HTTPException(404, f"批号无勾稽记录:{pi}")
+        return 果
     finally:
         conn.close()
 

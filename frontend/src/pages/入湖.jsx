@@ -33,6 +33,11 @@ export default function 入湖(){
       <div className="装载报">
         <div className="装载顶">
           <span className={`徽章 ${报.结果==="成功"?"通":"败"}`}>{报.结果||"完成"}</span>
+          {报.勾稽 && (
+            <span className={`徽章 ${报.勾稽.valid?"通":"败"}`}>
+              三方勾稽 {报.勾稽.valid?"valid":"失败"}
+            </span>
+          )}
           {报.批次编号 && <span className="批">{报.批次编号}</span>}
           {报.装载日 && <span className="日">装载日 {报.装载日}</span>}
           {报.说明 && <span className="日">{报.说明}</span>}

@@ -19,6 +19,8 @@ def 总览() -> dict:
                 for t in ("卫星_号卡属性", "卫星_套餐属性", "卫星_客户属性", "卫星_订购属性")
             ),
             "装载批次": c("SELECT COUNT(*) AS c FROM 装载批次"),
+            "勾稽有效批": c("SELECT COUNT(*) AS c FROM 批次勾稽 WHERE valid=1 AND 口径 NOT LIKE '迁移前%'"),
+            "勾稽失败批": c("SELECT COUNT(*) AS c FROM 批次勾稽 WHERE valid=0"),
             "隔离": c("SELECT COUNT(*) AS c FROM 隔离匣"),
             "末次贯验": dict(末) if 末 else None,
         }
